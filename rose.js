@@ -31,8 +31,23 @@ class Rose {
       this.getEllipsePoint(320)
     ]
 
+    const topLeft = [
+      this.getAnchorPoint(top, .4, 'start'),
+      [-0.83, -1.16],
+      [-0.66, -2.16],
+      this.getAnchorPoint(top, .2)
+    ]
+
+    const topRight = [
+      ...top,
+      this.getAnchorPoint(top, .5, 'end'),
+      [1, -1.33],
+      [1, -1.66],
+      this.getAnchorPoint(top, .5, 'middle')
+    ]
+
     const left = [
-      [-1,  -1.66],
+      [-1, -1.66],
       [-1.17, -1.33],
       [-1.33, 0],
       this.getEllipsePoint(100),
@@ -61,6 +76,8 @@ class Rose {
       right[1]
     ]
 
+    this.drawCurve(topLeft)
+    this.drawCurve(topRight)
     this.drawCurve(top)
     this.drawCurve(right)
     this.drawCurve(rightTwo)
@@ -75,6 +92,27 @@ class Rose {
     return [
       this._p.cos(this._p.radians(angle)),
       this._p.sin(this._p.radians(angle))
+    ]
+  }
+
+  getAnchorPoint(vertices, point, position) {
+    const v = [...vertices]
+    let chunk = [0, 4]
+    if (position === 'start') {
+      v.unshift(v[0])
+      chunk = [0, 4]
+    }
+    if (position === 'middle') {
+      chunk = [1, 5]
+    }
+    if (position === 'end') {
+      v.push([...v].pop())
+      chunk = [2, 6]
+    }
+    let coords = v.slice(...chunk)
+    return [
+      this._p.curvePoint(...coords.map(([x]) => x), point),
+      this._p.curvePoint(...coords.map(([, y]) => y), point)
     ]
   }
 
