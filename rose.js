@@ -22,6 +22,7 @@ class Rose {
     this._p.fill(this._fill)
     this._p.ellipse(this._x, this._y, this._radius * 2)
     this.drawPetals()
+    this.drawStem()
   }
 
   drawPetals() {
@@ -87,6 +88,30 @@ class Rose {
   }
 
   drawStem() {
+    const line = this.scale([
+      this.getEllipsePoint(95),
+      [-.21, 2],
+      [-.14, 3],
+      [-.19, 4],
+      [-.02, 7.14],
+      [-.02, 9.33]
+    ])
+
+    const left = [...line].map(([vx, vy]) => [vx - this._radius / 10, vy])
+    const right = [...line].map(([vx, vy]) => [vx + this._radius / 10, vy]).reverse()
+
+    // bend some lines
+    left[left.length - 1][0] += this._radius / 20
+    right[0][1] += this._radius / 20
+    const stem = [
+      ...left,
+      ...right
+    ]
+
+    // draw the stem
+    this._p.beginShape()
+    stem.map(v => this._p.vertex(...v))
+    this._p.endShape()
 
   }
 
