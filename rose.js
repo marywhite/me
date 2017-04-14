@@ -1,12 +1,14 @@
 class Rose {
-  constructor(width, height, x, y, radius, stroke, fill) {
-    this._width = width
-    this._height = height
-    this._x = x
-    this._y = y
+  constructor(radius, target, {stroke = 255, fill = 0, draggable = false} = {}) {
     this._radius = radius
+    this._width = this._radius * 6
+    this._height = this._radius * 13
+    this._x = this._radius * 2
+    this._y = this._radius * 3
     this._stroke = stroke
     this._fill = fill
+    this._target = target
+    this._draggable = draggable
   }
 
   sketch(p) {
@@ -131,8 +133,11 @@ class Rose {
     this._p.endShape()
   }
 
+  render() {
+    return new p5(this.sketch.bind(this), this._target)
+  }
+
 }
 
-const rose = new Rose(750, 500, 200, 200, 30, 255, 0)
-const pRose = new p5(rose.sketch.bind(rose), 'rose')
-
+const rose = new Rose(50, 'rose')
+rose.render()
