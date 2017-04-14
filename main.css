@@ -1,4 +1,14 @@
-#rose {
+#rose, .content {
   display: inline-block;
-  width: 50%;
+  width: 20%;
+}
+
+.content {
+  position: absolute;
+  top: 25%;
+}
+
+#lilrose {
+  position: absolute;
+  visibility: hidden;
 }

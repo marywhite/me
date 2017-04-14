@@ -17,12 +17,22 @@ class Rose {
   }
 
   setup() {
-    this._p.createCanvas(this._width, this._height)
+    this.canvas = this._p.createCanvas(this._width, this._height)
     this._p.stroke(this._stroke)
     this._p.fill(this._fill)
     this._p.ellipse(this._x, this._y, this._radius * 2)
     this.drawPetals()
     this.drawStem()
+    if (this._draggable) {
+      this._p.mouseMoved = this.mouseMoved.bind(this)
+    }
+  }
+
+  mouseMoved() {
+    const parent = this.canvas.parent()
+    parent.style.left = `${this._p.winMouseX}px`
+    parent.style.top = `${this._p.winMouseY}px`
+    parent.style.visibility = 'visible'
   }
 
   drawPetals() {
@@ -223,8 +233,10 @@ class Rose {
   render() {
     return new p5(this.sketch.bind(this), this._target)
   }
-
 }
 
 const rose = new Rose(50, 'rose')
 rose.render()
+const lilrose = new Rose(20, 'lilrose', {draggable: true})
+lilrose.render()
+
