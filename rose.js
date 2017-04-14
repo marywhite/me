@@ -88,10 +88,11 @@ class Rose {
   }
 
   drawStem() {
+    const leafAnchor = [-.14, 3]
     const line = this.scale([
       this.getEllipsePoint(95),
       [-.21, 2],
-      [-.14, 3],
+      leafAnchor,
       [-.19, 4],
       [-.02, 7.14],
       [-.02, 9.33]
@@ -108,11 +109,73 @@ class Rose {
       ...right
     ]
 
-    // draw the stem
+    const leaf = [
+      [0.57, 2.43],
+      [1.14, 1.71],
+      [2.29, 1.43],
+      [3, 1.71],
+      [1.86, 2.5],
+      [1.28, 2.93],
+      [0.57, 2.6],
+      [0, 3.1]
+    ]
+
+    // draw leaf
+    this.drawCurve([
+      leafAnchor,
+      ...leaf,
+      leafAnchor
+    ])
+
+    // draw stem
     this._p.beginShape()
     stem.map(v => this._p.vertex(...v))
     this._p.endShape()
 
+    const decoration = [
+      [.62, 2.5],
+      [1.14,  2.14],
+      [2.29, 1.79],
+      [2.85, 1.76]
+    ]
+    // draw center vein of rose
+    this.drawCurve(decoration)
+
+    const calcPoints = (arr, vertices) => this.scale(arr.map(([a, index, opts]) =>
+      this.getAnchorPoint(vertices, a, index, opts)))
+
+    // grab points along the center vein of the rose
+    const centerLeaf = [
+      [.75, 0, {repeatFirst: true}],
+      [.25],
+      [.66],
+      [.25, 1, {repeatLast: true}]
+    ]
+    const centerPoints = calcPoints(centerLeaf, decoration)
+
+    // grab points along the top edge of the rose
+    const topLeaf = [
+      [.75, 0, {repeatFirst: true}],
+      [.25],
+      [.66],
+      [.25, 1]
+    ]
+    const topPoints = calcPoints(topLeaf, leaf)
+
+    // grab points along the bottom edge of the rose
+    const bottomLeaf = [
+      [.25, 1],
+      [.9, 1],
+      [.33, 2],
+      [.6, 2],
+    ]
+    const bottomPoints = calcPoints(bottomLeaf, [...leaf].reverse())
+
+    // draw inner veins
+    centerPoints.forEach((centerPt, i) => {
+      this._p.curve(...centerPt, ...centerPt, ...topPoints[i], ...topPoints[i])
+      this._p.curve(...centerPt, ...centerPt, ...bottomPoints[i], ...bottomPoints[i])
+    })
   }
 
   getEllipsePoint(angle) {
