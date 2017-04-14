@@ -34,7 +34,7 @@ class Rose {
     ]
 
     const topLeft = [
-      this.getAnchorPoint(top, .4, 'start'),
+      this.getAnchorPoint(top, .4, 0, {repeatFirst: true}),
       [-0.83, -1.16],
       [-0.66, -2.16],
       this.getAnchorPoint(top, .2)
@@ -42,10 +42,10 @@ class Rose {
 
     const topRight = [
       ...top,
-      this.getAnchorPoint(top, .5, 'end'),
+      this.getAnchorPoint(top, .5, 2, {repeatLast: true}),
       [1, -1.33],
       [1, -1.66],
-      this.getAnchorPoint(top, .5, 'middle')
+      this.getAnchorPoint(top, .5, 1)
     ]
 
     const left = [
@@ -97,37 +97,36 @@ class Rose {
     ]
   }
 
-  getAnchorPoint(vertices, point, position) {
+  // return coordinates from any point along a curve where amount is a number between 0 and 1
+  // anchor points require 4 vertices tbd... specify starting index to target point in a curve.
+  // adjust for control points on curves, where first and last indicies are repeated with repeatFirst/Last
+  getAnchorPoint(vertices, amount, startingIndex = 0, {repeatFirst = false, repeatLast = false} = {}) {
     const v = [...vertices]
-    let chunk = [0, 4]
-    if (position === 'start') {
+    let chunk = [startingIndex, startingIndex + 4]
+    if (repeatFirst) {
       v.unshift(v[0])
-      chunk = [0, 4]
     }
-    if (position === 'middle') {
-      chunk = [1, 5]
-    }
-    if (position === 'end') {
+    if (repeatLast) {
       v.push([...v].pop())
-      chunk = [2, 6]
     }
     let coords = v.slice(...chunk)
     return [
-      this._p.curvePoint(...coords.map(([x]) => x), point),
-      this._p.curvePoint(...coords.map(([, y]) => y), point)
+      this._p.curvePoint(...coords.map(([x]) => x), amount),
+      this._p.curvePoint(...coords.map(([, y]) => y), amount)
     ]
   }
 
   scale(vertices) {
-    return [this._x + this._radius * vertices[0], this._y + this._radius * vertices[1]]
+    return vertices.map(([vx, vy]) => [this._x + this._radius * vx, this._y + this._radius * vy])
   }
 
   drawCurve(vertices) {
-    const anchored = [
+    // add control points to beginning and end of curve
+    const anchored = this.scale([
       vertices[0],
       ...vertices,
       [...vertices].pop()
-    ].map(this.scale.bind(this))
+    ])
     this._p.beginShape()
     anchored.map(v => this._p.curveVertex(...v))
     this._p.endShape()
