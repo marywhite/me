@@ -1,14 +1,26 @@
-#rose, .content {
-  display: inline-block;
-  width: 20%;
+p {
+  margin-top: 0;
 }
 
-.content {
-  position: absolute;
-  top: 25%;
+a {
+  color: #2404f2;
 }
 
-#lilrose {
+button { 
+  border:0;
+  font-size: 14px;
+  padding: 0;
+}
+button:focus{ outline:none; }  
+
+.name, .content {
   position: absolute;
   visibility: hidden;
+}
+
+.name {
+  cursor: pointer;
+  background-color: white;
+  color: #88B04B;
+  text-decoration: underline;
 }
