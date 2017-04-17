@@ -1,38 +1,19 @@
 class Rose {
-  constructor(radius, target, {stroke = 255, fill = 0, draggable = false} = {}) {
+  constructor(p, { radius, x, y, stroke = 0, fill = 255 } = {}) {
     this._radius = radius
-    this._width = this._radius * 6
-    this._height = this._radius * 13
-    this._x = this._radius * 2
-    this._y = this._radius * 3
+    this._x = x
+    this._y = y
     this._stroke = stroke
     this._fill = fill
-    this._target = target
-    this._draggable = draggable
-  }
-
-  sketch(p) {
     this._p = p
-    p.setup = this.setup.bind(this)
   }
 
-  setup() {
-    this.canvas = this._p.createCanvas(this._width, this._height)
+  draw() {
     this._p.stroke(this._stroke)
     this._p.fill(this._fill)
-    this._p.ellipse(this._x, this._y, this._radius * 2)
+    this._p.ellipse(this._x, this._y, this._radius)
     this.drawPetals()
     this.drawStem()
-    if (this._draggable) {
-      this._p.mouseMoved = this.mouseMoved.bind(this)
-    }
-  }
-
-  mouseMoved() {
-    const parent = this.canvas.parent()
-    parent.style.left = `${this._p.winMouseX}px`
-    parent.style.top = `${this._p.winMouseY}px`
-    parent.style.visibility = 'visible'
   }
 
   drawPetals() {
@@ -45,7 +26,7 @@ class Rose {
     ]
 
     const topLeft = [
-      this.getAnchorPoint(top, .4, 0, {repeatFirst: true}),
+      this.getAnchorPoint(top, .4, 0, { repeatFirst: true }),
       [-0.83, -1.16],
       [-0.66, -2.16],
       this.getAnchorPoint(top, .2)
@@ -53,7 +34,7 @@ class Rose {
 
     const topRight = [
       ...top,
-      this.getAnchorPoint(top, .5, 2, {repeatLast: true}),
+      this.getAnchorPoint(top, .5, 2, { repeatLast: true }),
       [1, -1.33],
       [1, -1.66],
       this.getAnchorPoint(top, .5, 1)
@@ -144,7 +125,7 @@ class Rose {
 
     const decoration = [
       [.62, 2.5],
-      [1.14,  2.14],
+      [1.14, 2.14],
       [2.29, 1.79],
       [2.85, 1.76]
     ]
@@ -156,16 +137,16 @@ class Rose {
 
     // grab points along the center vein of the rose
     const centerLeaf = [
-      [.75, 0, {repeatFirst: true}],
+      [.75, 0, { repeatFirst: true }],
       [.25],
       [.66],
-      [.25, 1, {repeatLast: true}]
+      [.25, 1, { repeatLast: true }]
     ]
     const centerPoints = calcPoints(centerLeaf, decoration)
 
     // grab points along the top edge of the rose
     const topLeaf = [
-      [.75, 0, {repeatFirst: true}],
+      [.75, 0, { repeatFirst: true }],
       [.25],
       [.66],
       [.25, 1]
@@ -198,7 +179,7 @@ class Rose {
   // return coordinates from any point along a curve where amount is a number between 0 and 1
   // anchor points require 4 vertices tbd... specify starting index to target point in a curve.
   // adjust for control points on curves, where first and last indicies are repeated with repeatFirst/Last
-  getAnchorPoint(vertices, amount, startingIndex = 0, {repeatFirst = false, repeatLast = false} = {}) {
+  getAnchorPoint(vertices, amount, startingIndex = 0, { repeatFirst = false, repeatLast = false } = {}) {
     const v = [...vertices]
     let chunk = [startingIndex, startingIndex + 4]
     if (repeatFirst) {
@@ -229,14 +210,42 @@ class Rose {
     anchored.map(v => this._p.curveVertex(...v))
     this._p.endShape()
   }
+}
 
+const DIMENSION_THRESHOLD = 1024
+
+class Canvas {
+  constructor(target = '') {
+    this._target = target
+  }
+  sketch(p) {
+    this._p = p
+    this._p.setup = this.setup.bind(this)
+    this._p.draw = this.draw.bind(this)
+  }
+  setup() {
+    this.canvas = this._p.createCanvas(this._p.displayWidth, this._p.displayHeight)
+    const smallDisplay = this._p.displayWidth <= DIMENSION_THRESHOLD
+    const [x, y] = [
+      this._p.displayWidth / 3,
+      this._p.displayHeight / 5
+    ]
+    const opts = {
+      x,
+      y,
+      radius: this._p.displayWidth / (smallDisplay ? 10 : 30),
+      stroke: '#fda732',
+      fill: '#ffffff',
+    }
+    this._rose = new Rose(this._p, opts)
+  }
+  draw() {
+    this._rose.draw()
+  }
   render() {
     return new p5(this.sketch.bind(this), this._target)
   }
 }
 
-const rose = new Rose(50, 'rose')
-rose.render()
-const lilrose = new Rose(20, 'lilrose', {draggable: true})
-lilrose.render()
-
+const canvas = new Canvas()
+canvas.render()
