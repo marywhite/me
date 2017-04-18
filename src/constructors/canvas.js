@@ -2,6 +2,8 @@ import Rose from './rose'
 import Resume from './resume'
 
 const DIMENSION_THRESHOLD = 1024
+const STROKE_MAIN = '#fda732'
+const FILL_MAIN = '#ffffff'
 
 export default class Canvas {
   constructor(target = '') {
@@ -24,8 +26,8 @@ export default class Canvas {
       x,
       y,
       radius: this._p.displayWidth / (smallDisplay ? 10 : 30),
-      stroke: '#fda732',
-      fill: '#ffffff',
+      stroke: STROKE_MAIN,
+      fill: FILL_MAIN,
     }
     this._rose = new Rose(this._p, opts)
     this._p.drawFns.add(this._rose.draw)
