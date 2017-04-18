@@ -233,6 +233,9 @@ class Resume {
   }
 
   navigate = () => {
+    if (this.hasRose) {
+      this._p.drawFns.delete(this.decorate)
+    }
     this.hasRose = false
     if (this._selected) {
       this._selected.elt.style.visibility = 'hidden'
@@ -240,15 +243,13 @@ class Resume {
     this._selected = this.sections.shift()
     if (this._selected) {
       const coords = this._smallDisplay ? [this._button.x, this._button.y + this._button.height * 2] :
-        [this._x * 1.75, this._y]
+      [this._x * 1.75, this._y]
       this._selected.position(...coords)
       this._selected.elt.style.visibility = 'visible'
       this.hasRose = this._selected.class().split(' ').includes('decorate')
     }
     if (this.hasRose) {
-      this.decorate()
-    } else {
-      this._p.clear()
+      this._p.drawFns.add(this.decorate)
     }
     this.sections.push(this._selected)
   }
@@ -274,6 +275,7 @@ class Canvas {
     this._p = p
     this._p.setup = this.setup
     this._p.draw = this.draw
+    this._p.drawFns = new Set()
   }
   setup = () => {
     this.canvas = this._p.createCanvas(this._p.displayWidth, this._p.displayHeight)
@@ -290,15 +292,17 @@ class Canvas {
       fill: '#ffffff',
     }
     this._rose = new Rose(this._p, opts)
+    this._p.drawFns.add(this._rose.draw)
     const resume = new Resume(this._p, { x, y, smallDisplay })
     resume.setup()
   }
+
   draw = () => {
-    this._rose.draw()
+    this._p.clear()
+    this._p.drawFns.forEach(fn => fn())
   }
-  render = () => {
-    return new p5(this.sketch, this._target)
-  }
+
+  render = () => new p5(this.sketch, this._target)
 }
 
 const canvas = new Canvas()

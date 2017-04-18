@@ -321,6 +321,9 @@ var _initialiseProps2 = function _initialiseProps2() {
   };
 
   this.navigate = function () {
+    if (_this4.hasRose) {
+      _this4._p.drawFns.delete(_this4.decorate);
+    }
     _this4.hasRose = false;
     if (_this4._selected) {
       _this4._selected.elt.style.visibility = 'hidden';
@@ -335,9 +338,7 @@ var _initialiseProps2 = function _initialiseProps2() {
       _this4.hasRose = _this4._selected.class().split(' ').indexOf('decorate') !== -1;
     }
     if (_this4.hasRose) {
-      _this4.decorate();
-    } else {
-      _this4._p.clear();
+      _this4._p.drawFns.add(_this4.decorate);
     }
     _this4.sections.push(_this4._selected);
   };
@@ -372,6 +373,7 @@ var Canvas = function Canvas() {
     _this2._p = p;
     _this2._p.setup = _this2.setup;
     _this2._p.draw = _this2.draw;
+    _this2._p.drawFns = new Set();
   };
 
   this.setup = function () {
@@ -388,12 +390,16 @@ var Canvas = function Canvas() {
       fill: '#ffffff'
     };
     _this2._rose = new Rose(_this2._p, opts);
+    _this2._p.drawFns.add(_this2._rose.draw);
     var resume = new Resume(_this2._p, { x: x, y: y, smallDisplay: smallDisplay });
     resume.setup();
   };
 
   this.draw = function () {
-    _this2._rose.draw();
+    _this2._p.clear();
+    _this2._p.drawFns.forEach(function (fn) {
+      return fn();
+    });
   };
 
   this.render = function () {
