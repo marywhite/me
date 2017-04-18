@@ -8,7 +8,7 @@ class Rose {
     this._p = p
   }
 
-  draw() {
+  draw = () => {
     this._p.stroke(this._stroke)
     this._p.fill(this._fill)
     this._p.ellipse(this._x, this._y, this._radius)
@@ -16,7 +16,7 @@ class Rose {
     this.drawStem()
   }
 
-  drawPetals() {
+  drawPetals = () => {
     const top = [
       this.getEllipsePoint(200),
       [-.16, -2],
@@ -169,17 +169,15 @@ class Rose {
     })
   }
 
-  getEllipsePoint(angle) {
-    return [
-      this._p.cos(this._p.radians(angle)),
-      this._p.sin(this._p.radians(angle))
-    ]
-  }
+  getEllipsePoint = (angle) => ([
+    this._p.cos(this._p.radians(angle)),
+    this._p.sin(this._p.radians(angle))
+  ])
 
   // return coordinates from any point along a curve where amount is a number between 0 and 1
   // anchor points require 4 vertices tbd... specify starting index to target point in a curve.
   // adjust for control points on curves, where first and last indicies are repeated with repeatFirst/Last
-  getAnchorPoint(vertices, amount, startingIndex = 0, { repeatFirst = false, repeatLast = false } = {}) {
+  getAnchorPoint = (vertices, amount, startingIndex = 0, { repeatFirst = false, repeatLast = false } = {}) => {
     const v = [...vertices]
     let chunk = [startingIndex, startingIndex + 4]
     if (repeatFirst) {
@@ -195,11 +193,9 @@ class Rose {
     ]
   }
 
-  scale(vertices) {
-    return vertices.map(([vx, vy]) => [this._x + this._radius * vx, this._y + this._radius * vy])
-  }
+  scale = (vertices) => vertices.map(([vx, vy]) => [this._x + this._radius * vx, this._y + this._radius * vy])
 
-  drawCurve(vertices) {
+  drawCurve = (vertices) => {
     // add control points to beginning and end of curve
     const anchored = this.scale([
       vertices[0],
@@ -222,7 +218,7 @@ class Resume {
     this.sections = [...this._p.selectAll('.content'), void 0]
   }
 
-  setup() {
+  setup = () => {
     this._button.position(this._x * 1.25, this._y * 2.5)
     this._button.elt.style.visibility = 'visible'
     if (this._smallDisplay) {
@@ -236,7 +232,7 @@ class Resume {
     this._button.mousePressed(() => this.navigate())
   }
 
-  navigate() {
+  navigate = () => {
     this.hasRose = false
     if (this._selected) {
       this._selected.elt.style.visibility = 'hidden'
@@ -244,7 +240,7 @@ class Resume {
     this._selected = this.sections.shift()
     if (this._selected) {
       const coords = this._smallDisplay ? [this._button.x, this._button.y + this._button.height * 2] :
-      [this._x * 1.75, this._y]
+        [this._x * 1.75, this._y]
       this._selected.position(...coords)
       this._selected.elt.style.visibility = 'visible'
       this.hasRose = this._selected.class().split(' ').includes('decorate')
@@ -257,7 +253,7 @@ class Resume {
     this.sections.push(this._selected)
   }
 
-  decorate() {
+  decorate = () => {
     const { width, height, x, y } = this._selected
     const opts = {
       x: x + (this._smallDisplay ? this._button.width : width) / 2,
@@ -270,17 +266,16 @@ class Resume {
 }
 
 const DIMENSION_THRESHOLD = 1024
-
 class Canvas {
   constructor(target = '') {
     this._target = target
   }
-  sketch(p) {
+  sketch = (p) => {
     this._p = p
-    this._p.setup = this.setup.bind(this)
-    this._p.draw = this.draw.bind(this)
+    this._p.setup = this.setup
+    this._p.draw = this.draw
   }
-  setup() {
+  setup = () => {
     this.canvas = this._p.createCanvas(this._p.displayWidth, this._p.displayHeight)
     const smallDisplay = this._p.displayWidth <= DIMENSION_THRESHOLD
     const [x, y] = [
@@ -298,11 +293,11 @@ class Canvas {
     const resume = new Resume(this._p, { x, y, smallDisplay })
     resume.setup()
   }
-  draw() {
+  draw = () => {
     this._rose.draw()
   }
-  render() {
-    return new p5(this.sketch.bind(this), this._target)
+  render = () => {
+    return new p5(this.sketch, this._target)
   }
 }
 
