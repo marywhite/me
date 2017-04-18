@@ -1,0 +1,4 @@
+{
+  "plugins": ["array-includes", "transform-class-properties"],
+  "presets":["es2015"]
+}

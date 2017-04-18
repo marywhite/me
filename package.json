@@ -1,0 +1,19 @@
+{
+  "name": "me",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:marywhite/me.git",
+  "author": "Mary White <mary.white@icfolson.com>",
+  "license": "MIT",
+  "scripts": {
+    "bundle": "webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-plugin-array-includes": "^2.0.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "webpack": "^2.4.1"
+  }
+}
