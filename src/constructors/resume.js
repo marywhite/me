@@ -17,7 +17,8 @@ export default class Resume {
       this._button.elt.style['font-size'] = '24px'
     }
     this._button.elt.onkeypress = (e) => {
-      if (e.keyCode === 31 || e.keyCode === 13) {
+      console.log(e.keyCode)
+      if (e.keyCode === 32 || e.keyCode === 13) {
         this.navigate()
       }
     }
